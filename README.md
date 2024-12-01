@@ -1,1 +1,2 @@
 # composesTEST
+docker compose up
