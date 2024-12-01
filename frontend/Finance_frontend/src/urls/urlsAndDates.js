@@ -49,7 +49,7 @@ export let months = {
 export const URLS = {
   registration: "http://localhost:8000/api/auth/users/",
   authorisation: "http://localhost:8000/api/auth/token/login/",
-  resetPassword: "http://localhost:8000/api/auth/users/reset_password/",
+  resetPassword: "http://localhost`:8000/api/auth/users/reset_password/",
   resetPasswordConfirm: "http://localhost:8000/api/auth/users/reset_password_confirm/",
   balance: `http://localhost:8000/api/balance/`,
   sumIncomeCash: `http://localhost:8000/api/sum-incomecash/?date_start=${firstDayOfMonth}&date_end=${lastDayOfMonth}`,

@@ -5,8 +5,8 @@ services:
     image: bitnami/postgresql-repmgr:17.2.0
     container_name: master-1
     volumes:
-      - /data/postgresql_master:/bitnami/postgresql
-      - /data/repmgr_master:/opt/bitnami/repmgr/conf
+      #- /data/postgresql_master:/bitnami/postgresql
+      #- /data/repmgr_master:/opt/bitnami/repmgr/conf
     env_file: 
       - path: ./postgres-master/my_env.env
     restart: unless-stopped
@@ -21,8 +21,8 @@ services:
     image: bitnami/postgresql-repmgr:17.2.0
     container_name: slave-1
     volumes:
-      - /data/postgresql_slave:/bitnami/postgresql
-      - /data/repmgr_slave:/opt/bitnami/repmgr/conf
+      #- /data/postgresql_slave:/bitnami/postgresql
+      #- /data/repmgr_slave:/opt/bitnami/repmgr/conf
     env_file: 
       - path: ./postgres-slave/my_env.env
     depends_on:
@@ -38,6 +38,7 @@ services:
   myapp-frontend:
     build:
       context: ./frontend/Finance_frontend/
+    container_name: fronted
     ports:
       - "3000:3000"
     depends_on:
@@ -47,15 +48,16 @@ services:
       myapp-network:
         #ipv4_address: 172.20.0.32
 
-  nginx:
-    build:
-      context: ./frontend/Finance_frontend/nginx
-    ports:
-      - "80:80"
-    depends_on:
-      - myapp-frontend
-    networks:
-      myapp-network:
+        #nginx:
+        #build:
+        #context: ./frontend/Finance_frontend/nginx
+        #container_name: nginx
+        #ports:
+        #- "80:80"
+        #depends_on:
+        #- myapp-frontend
+        #networks:
+        #myapp-network:
 
 
   # postgres-exporter-master:
@@ -93,10 +95,14 @@ services:
   myapp-backend:
     build:
       context: ./backend/FinanceApp/
+    container_name: backend
     env_file:
       - ./backend/FinanceApp/my_env.env
     ports:
       - "8000:8000"
+    command: >
+       sh -c 'python3 ./manage.py migrate &&
+       python3 ./manage.py runserver 0.0.0.0:8000'
     networks:
       myapp-network:
         # ipv4_address: 172.20.0.31
@@ -106,7 +112,4 @@ services:
 
 networks:
   myapp-network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/24
+    driver: host
