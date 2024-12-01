@@ -1,26 +1,12 @@
 version: '3.8'
 
 services:
-  myapp-backend:
-    build:
-      context: ./backend/FinanceApp/
-    env_file:
-      - ./backend/FinanceApp/my_env.env
-    ports:
-      - "8000:8000"
-    networks:
-      myapp-network:
-        # ipv4_address: 172.20.0.31
-    depends_on:
-      - myapp-postgres-master 
-
-
   myapp-postgres-master:
     image: bitnami/postgresql-repmgr:17.2.0
     container_name: master-1
-    # volumes:
-    #   - /data/postgresql_master:/bitnami/postgresql
-    #   - /data/repmgr_master:/opt/bitnami/repmgr/conf
+    volumes:
+      - /data/postgresql_master:/bitnami/postgresql
+      - /data/repmgr_master:/opt/bitnami/repmgr/conf
     env_file: 
       - path: ./postgres-master/my_env.env
     restart: unless-stopped
@@ -34,9 +20,9 @@ services:
   myapp-postgres-slave:
     image: bitnami/postgresql-repmgr:17.2.0
     container_name: slave-1
-    # volumes:
-    #   - /data/postgresql_slave:/bitnami/postgresql
-    #   - /data/repmgr_slave:/opt/bitnami/repmgr/conf
+    volumes:
+      - /data/postgresql_slave:/bitnami/postgresql
+      - /data/repmgr_slave:/opt/bitnami/repmgr/conf
     env_file: 
       - path: ./postgres-slave/my_env.env
     depends_on:
@@ -104,6 +90,19 @@ services:
   #     myapp-network:
   #   depends_on:
   #     - myapp-postgres-slave
+  myapp-backend:
+    build:
+      context: ./backend/FinanceApp/
+    env_file:
+      - ./backend/FinanceApp/my_env.env
+    ports:
+      - "8000:8000"
+    networks:
+      myapp-network:
+        # ipv4_address: 172.20.0.31
+    depends_on:
+      - myapp-postgres-master
+      - myapp-postgres-slave
 
 networks:
   myapp-network:

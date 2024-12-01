@@ -1,4 +1,4 @@
-FROM bitnami/postgresql-repmgr:17.2.0
+FROM bitnami/postgresql-repmgr:16
 #RUN chmod -R g+rwX /opt/bitnami
 #COPY --chmod=0666 ./postgresMaster.sh /docker-entrypoint-initdb.d/postgresMaster.sh
 #USER postgres
