@@ -1,0 +1,7 @@
+databases:
+  - name: feenance
+    user: root
+    password: 123456
+    host: myapp-postgres-master
+    port: 5432
+    sslmode: disable

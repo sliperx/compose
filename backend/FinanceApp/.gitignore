@@ -1,0 +1,12 @@
+/venv/
+.idea/
+__pycache__/
+.env
+staticfiles
+*.log
+*.xml
+.coverage
+htmlcov/
+
+Cache_files/*
+db.sqlite3
