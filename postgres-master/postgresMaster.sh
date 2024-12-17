@@ -1,4 +1,7 @@
 #!/bin/bash
+echo "host replication $PG_REP_USER slave-1.composestest_myapp-network trust" >> "$PGDATA/pg_hba.conf"
+set -e
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "feenance" -c "CREATE USER $PG_REP_USER REPLICATION LOGIN CONNECTION LIMIT 100 ENCRYPTED PASSWORD '$PG_REP_PASSWORD';"
 cat >> ${PGDATA}/postgresql.conf <<EOF
 wal_level = hot_standby
 max_wal_senders = 8

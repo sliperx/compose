@@ -1,0 +1,14 @@
+FROM bitnami/postgresql-repmgr:16
+USER 0
+RUN groupadd --gid 1001 postgresql && useradd --uid 1001 --gid 1001 postgresql
+RUN chown -R 1001:1001 /opt/bitnami/postgresql
+USER 1001
+
+#based on https://github.com/pgvector/pgvector/ v0.7.4
+#COPY /PgVector/vector.so /usr/lib/postgresql/14/lib
+#COPY /PgVector/vector_control/* /usr/share/postgresql/14/extension
+#RUN mkdir /backups
+#RUN mkdir /scripts
+#COPY PostgresSlave/backup.sh /scripts/backup.sh
+#RUN chmod 0777 /docker-entrypoint-initdb.d/postgresSlave.sh
+#RUN chmod 0777 /scripts/backup.sh

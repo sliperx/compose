@@ -2,9 +2,10 @@ version: '3.8'
 
 services:
   myapp-postgres-master:
-    image: bitnami/postgresql-repmgr:17.2.0
+    #image: postgres:16
+    build: ./postgres-master/
     container_name: master-1
-    volumes:
+      #volumes:
       #- /data/postgresql_master:/bitnami/postgresql
       #- /data/repmgr_master:/opt/bitnami/repmgr/conf
     env_file: 
@@ -18,9 +19,10 @@ services:
 
 
   myapp-postgres-slave:
-    image: bitnami/postgresql-repmgr:17.2.0
+    #image: postgres:16
+    build: ./postgres-slave/
     container_name: slave-1
-    volumes:
+      #volumes:
       #- /data/postgresql_slave:/bitnami/postgresql
       #- /data/repmgr_slave:/opt/bitnami/repmgr/conf
     env_file: 
@@ -48,50 +50,51 @@ services:
       myapp-network:
         #ipv4_address: 172.20.0.32
 
-        #nginx:
-        #build:
-        #context: ./frontend/Finance_frontend/nginx
-        #container_name: nginx
-        #ports:
-        #- "80:80"
-        #depends_on:
-        #- myapp-frontend
-        #networks:
-        #myapp-network:
+  nginx:
+    build:
+      context: ./frontend/Finance_frontend/nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - myapp-frontend
+    networks:
+      myapp-network:
 
 
-  # postgres-exporter-master:
-  #   image: prometheuscommunity/postgres-exporter:latest
-  #   container_name: exporter-master-1
-  #   ports:
-  #     - 9187:9187
+  postgres-exporter-master:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: exporter-master-1
+    ports:
+      - 9187:9187
+  #     # volumes:
+  #     #- ./custom_queries.yml:/etc/postgres_exporter/queries.yaml
+    environment:
+      DATA_SOURCE_URI: "master-1:5432/feenance?sslmode=disable"
+      DATA_SOURCE_USER: replicationuser
+      DATA_SOURCE_PASS: 123456
+    networks:
+      myapp-network:
+    depends_on:
+      - myapp-postgres-master
+
+  postgres-exporter-slave:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: exporter-slave-1
+    ports:
+      - 9188:9187
   #       # volumes:
   #     #- ./custom_queries.yml:/etc/postgres_exporter/queries.yaml
-  #   environment:
-  #     DATA_SOURCE_URI: "master-1:5432/feenance?sslmode=disable"
-  #     DATA_SOURCE_USER: repmgr 
-  #     DATA_SOURCE_PASS: 123456
-  #   networks:
-  #     myapp-network:
-  #   depends_on:
-  #     - myapp-postgres-master
+    environment:
+      DATA_SOURCE_URI: "slave-1:5433/feenance?sslmode=disable"
+      DATA_SOURCE_USER: replicationuser
+      DATA_SOURCE_PASS: 123456
+    networks:
+      myapp-network:
+    depends_on:
+      - myapp-postgres-slave
 
 
-  # postgres-exporter-slave:
-  #   image: prometheuscommunity/postgres-exporter:latest
-  #   container_name: exporter-slave-1
-  #   ports:
-  #     - 9188:9187
-  #       # volumes:
-  #     #- ./custom_queries.yml:/etc/postgres_exporter/queries.yaml
-  #   environment:
-  #     DATA_SOURCE_URI: "slave-1:5433/feenance?sslmode=disable"
-  #     DATA_SOURCE_USER: repmgr
-  #     DATA_SOURCE_PASS: 123456
-  #   networks:
-  #     myapp-network:
-  #   depends_on:
-  #     - myapp-postgres-slave
   myapp-backend:
     build:
       context: ./backend/FinanceApp/
@@ -110,6 +113,12 @@ services:
       - myapp-postgres-master
       - myapp-postgres-slave
 
+
+  whodb:
+    image: clidey/whodb
+    ports:
+      - "8090:8080"
+
 networks:
   myapp-network:
-    driver: host
+    driver: bridge

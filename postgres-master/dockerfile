@@ -1,9 +1,4 @@
-FROM bitnami/postgresql-repmgr:16
-#RUN chmod -R g+rwX /opt/bitnami
-#COPY --chmod=0666 ./postgresMaster.sh /docker-entrypoint-initdb.d/postgresMaster.sh
-#USER postgres
-#COPY --chown=postgres:postgres PostgresqlDict/* /usr/share/postgresql/14/tsearch_data/
-
-#based on https://github.com/pgvector/pgvector/ v0.7.4
-#COPY /PgVector/vector.so /usr/lib/postgresql/14/lib
-#COPY /PgVector/vector_control/* /usr/share/postgresql/14/extension
+FROM postgres:16
+COPY ./postgresMaster.sh /docker-entrypoint-initdb.d/postgresMaster.sh
+RUN chmod 0666 /docker-entrypoint-initdb.d/postgresMaster.sh
+#COPY --chown=postgres:postgres PostgresqlDict/* /usr/share/postgresql/16/tsearch_data/
