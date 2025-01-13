@@ -113,9 +113,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 CORS_ALLOWED_ORIGINS = [
     "https://freenance.online",
-    "https://back.freenance.online",
-    "http://127.0.0.1",
-    "http://10.0.20.107"
+    "https://back.freenance.online"
+    "http:10.0.20.107"
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -131,15 +130,13 @@ ALLOWED_HOSTS = [
 
 CORS_ORIGIN_WHITELIST = [
     "https://freenance.online",
-    "https://back.freenance.online",
-    "http://127.0.0.1",
+    "https://back.freenance.online"
     "http://10.0.20.107"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://freenance.online",
-    "https://back.freenance.online",
-    "http://127.0.0.1",
+    "https://back.freenance.online"
     "http://10.0.20.107"
 ]
 
