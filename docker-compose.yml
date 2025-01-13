@@ -39,10 +39,11 @@ services:
 
   myapp-frontend:
     build:
-      context: ./frontend/Finance_frontend/
+      context: ./frontend/Finance_frontend/finance-app
     container_name: fronted
     ports:
       - "3000:3000"
+      - "80:80"
     depends_on:
       - myapp-postgres-master
       - myapp-backend
@@ -50,16 +51,16 @@ services:
       myapp-network:
         #ipv4_address: 172.20.0.32
 
-  nginx:
-    build:
-      context: ./frontend/Finance_frontend/nginx
-    container_name: nginx
-    ports:
-      - "80:80"
-    depends_on:
-      - myapp-frontend
-    networks:
-      myapp-network:
+        #nginx:
+        #build:
+        #context: ./frontend/Finance_frontend/nginx
+        #container_name: nginx
+        #ports:
+        #- "80:80"
+        #depends_on:
+        #- myapp-frontend
+        #networks:
+        #myapp-network:
 
 
   postgres-exporter-master:
@@ -113,11 +114,6 @@ services:
       - myapp-postgres-master
       - myapp-postgres-slave
 
-
-  whodb:
-    image: clidey/whodb
-    ports:
-      - "8090:8080"
 
 networks:
   myapp-network:
