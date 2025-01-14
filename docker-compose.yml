@@ -15,7 +15,6 @@ services:
       - "5432:5432"
     networks:
       myapp-network:
-        #ipv4_address: 172.20.0.21
 
 
   myapp-postgres-slave:
@@ -34,7 +33,6 @@ services:
       - "5433:5432"
     networks:
       myapp-network:
-        #ipv4_address: 172.20.0.22
 
 
   myapp-frontend:
@@ -49,30 +47,15 @@ services:
       - myapp-backend
     networks:
       myapp-network:
-        #ipv4_address: 172.20.0.32
-
-        #nginx:
-        #build:
-        #context: ./frontend/Finance_frontend/nginx
-        #container_name: nginx
-        #ports:
-        #- "80:80"
-        #depends_on:
-        #- myapp-frontend
-        #networks:
-        #myapp-network:
-
 
   postgres-exporter-master:
     image: prometheuscommunity/postgres-exporter:latest
     container_name: exporter-master-1
     ports:
       - 9187:9187
-  #     # volumes:
-  #     #- ./custom_queries.yml:/etc/postgres_exporter/queries.yaml
     environment:
       DATA_SOURCE_URI: "master-1:5432/feenance?sslmode=disable"
-      DATA_SOURCE_USER: replicationuser
+      DATA_SOURCE_USER: feenance
       DATA_SOURCE_PASS: 123456
     networks:
       myapp-network:
@@ -84,16 +67,27 @@ services:
     container_name: exporter-slave-1
     ports:
       - 9188:9187
-  #       # volumes:
-  #     #- ./custom_queries.yml:/etc/postgres_exporter/queries.yaml
     environment:
       DATA_SOURCE_URI: "slave-1:5433/feenance?sslmode=disable"
-      DATA_SOURCE_USER: replicationuser
+      DATA_SOURCE_USER: feenance
       DATA_SOURCE_PASS: 123456
     networks:
       myapp-network:
     depends_on:
       - myapp-postgres-slave
+
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
 
 
   myapp-backend:
@@ -113,7 +107,33 @@ services:
     depends_on:
       - myapp-postgres-master
       - myapp-postgres-slave
+  
+  prometheus-server:
+    build: ./prometheus-server/
+    container_name: prometheus-server
+    volumes:
+      - /prometheus-data/:/prometheus/
+    ports:
+      - "9090:9090"
+    networks:
+      myapp-network:
+    depends_on:
+      - myapp-backend
 
+  grafana-server:
+    build: ./grafana-server/
+    container_name: grafana-server
+    volumes:
+      - /grafana-data/:/var/lib/grafana/
+      - ./grafana-server/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=123456
+    ports:
+      - "3001:3000"
+    networks:
+      myapp-network:
+    depends_on:
+      - prometheus-server
 
 networks:
   myapp-network:

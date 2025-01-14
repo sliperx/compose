@@ -1,0 +1,9 @@
+apiVersion: 1
+
+datasources:
+  - name: prometheus-server
+    type: prometheus
+    access: proxy
+    url: http://10.0.20.107:9090/
+    isDefault: true
+    uid: prometheus_datasource

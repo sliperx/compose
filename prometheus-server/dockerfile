@@ -1,0 +1,4 @@
+FROM prom/prometheus:v3.1.0
+COPY . ../etc/prometheus
+EXPOSE 9090
+
