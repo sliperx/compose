@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "host all $POSTGRES_USER all trust" >> "$PGDATA/pg_hba.conf"
+echo "host all all all trust" >> "$PGDATA/pg_hba.conf"
 echo "host replication $PG_REP_USER slave-1.20250113_feenance_myapp-network trust" >> "$PGDATA/pg_hba.conf"
 set -e
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "feenance" -c "CREATE USER $PG_REP_USER REPLICATION LOGIN CONNECTION LIMIT 100 ENCRYPTED PASSWORD '$PG_REP_PASSWORD';"

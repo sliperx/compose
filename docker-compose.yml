@@ -49,7 +49,7 @@ services:
       myapp-network:
 
   postgres-exporter-master:
-    image: prometheuscommunity/postgres-exporter:latest
+    image: prometheuscommunity/postgres-exporter:v0.16.0
     container_name: exporter-master-1
     ports:
       - 9187:9187
@@ -63,12 +63,12 @@ services:
       - myapp-postgres-master
 
   postgres-exporter-slave:
-    image: prometheuscommunity/postgres-exporter:latest
+    image: prometheuscommunity/postgres-exporter:v0.16.0
     container_name: exporter-slave-1
     ports:
       - 9188:9187
     environment:
-      DATA_SOURCE_URI: "slave-1:5433/feenance?sslmode=disable"
+      DATA_SOURCE_URI: "slave-1:5432/feenance?sslmode=disable"
       DATA_SOURCE_USER: feenance
       DATA_SOURCE_PASS: 123456
     networks:
@@ -77,17 +77,18 @@ services:
       - myapp-postgres-slave
 
   node-exporter:
-    image: quay.io/prometheus/node-exporter:latest
+    image: quay.io/prometheus/node-exporter:v1.8.2
     container_name: node-exporter
     ports:
       - "9100:9100"
     command:
       - '--path.rootfs=/host'
-    network_mode: host
     pid: host
     restart: unless-stopped
     volumes:
       - '/:/host:ro,rslave'
+    networks:
+      myapp-network:
 
 
   myapp-backend:

@@ -24,11 +24,11 @@ scrape_configs:
   # scheme defaults to 'http'.
   - job_name: 'postgres-master'
     static_configs:
-      - targets: ['10.0.20.107:9187']
+      - targets: ['exporter-master-1:9187']
   - job_name: 'postgres-slave'
     static_configs:
-      - targets: ['10.0.20.107:9188']
+      - targets: ['exporter-slave-1:9187']
   - job_name: 'node-exporter'
     static_configs:
-      - targets: ['10.0.20.107:9100']
+      - targets: ['node-exporter:9100']
 
