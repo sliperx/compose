@@ -1,4 +1,4 @@
-FROM bitnami/postgresql-repmgr:16
+FROM soldevelo/postgresql-repmgr:16
 USER 0
 RUN groupadd --gid 1001 postgresql && useradd --uid 1001 --gid 1001 postgresql
 RUN chown -R 1001:1001 /opt/bitnami/postgresql
